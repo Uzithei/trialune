@@ -36,6 +36,8 @@ external account, hosted service or remote publication is involved.
 | Incompatible versions cannot compare | Changed-definition test | Whole suite/runtime/repetition settings must match |
 | Prior evidence and exclusive access are protected | Overwrite, lock, changed-agent and simulated-disk-failure tests | Local filesystem; no database transaction service |
 | Installed package includes tasks and examples | `qualify_package.py` | Fresh venv outside source, both CLIs and negative agent |
+| Public Git content excludes local notes and common secret patterns | `test_repository.py`, `check_repository.py` | Reads staged bytes; focused pattern checks are not exhaustive secret detection |
+| Source releases contain only approved public files | `qualify_package.py` | Archive inspection, identical wheel rebuild from source, clean installation |
 | Public CLI supports pass/fail/unknown and comparisons | `qualify_agents.py` | Retained JSON/HTML/JUnit and execution logs |
 
 ## Legacy purchasing evidence
@@ -60,6 +62,10 @@ Those tests do not imply a real purchasing integration or live payment execution
   not included in parent-process line coverage. A percentage is not a safety score.
 - Final evidence is tied to source files, not signed. Keep evidence under trusted ownership.
   Regression verification does not prove a framework or agent can never fail.
+
+The [CI workflow](../.github/workflows/ci.yml) targets macOS and Linux using this same gate.
+Its actions are pinned, permissions are read-only and it does not publish packages or upload
+run bundles. A local passing gate is not evidence of a hosted CI run or another OS passing.
 
 ## Unverified or out of scope
 

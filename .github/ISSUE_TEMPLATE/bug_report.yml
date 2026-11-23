@@ -1,0 +1,36 @@
+name: Bug report
+description: Report incorrect behavior with a minimal, reproducible example.
+title: "bug: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Remove credentials, personal data and customer content from examples and logs.
+        For vulnerabilities, follow SECURITY.md instead of publishing exploit details here.
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      description: Include the package version or Git commit, Python version and operating system.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction
+      description: Provide the command and smallest synthetic task/agent that reproduces the issue.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Include exit status and relevant redacted evidence. Do not upload a private run bundle.
+    validations:
+      required: true

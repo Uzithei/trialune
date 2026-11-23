@@ -4,6 +4,8 @@ The first release evaluates trusted local Python agents across extraction, groun
 controlled tool workflows. Read [README](README.md), [task format](docs/task-format.md),
 [integration boundaries](docs/agent-integration.md) and [architecture](docs/architecture.md) first.
 No connected account, hosted service or model credential is required for development.
+Participation follows the [code of conduct](CODE_OF_CONDUCT.md). Vulnerabilities should be
+reported using the [security policy](SECURITY.md), not public bug reports with exploit details.
 
 ## Development loop
 
@@ -16,7 +18,20 @@ No connected account, hosted service or model credential is required for develop
 
 The full gate rejects skipped/xfail tests, dependency-boundary violations and source changes
 during verification. Do not weaken these gates to pass. Coverage is diagnostic, not a claim
-that every behavior was tested. Use the same command locally and in CI.
+that every behavior was tested. Use the same command locally and in CI. The Git index must
+contain the intended public files: run `git add <specific-paths>` before the full gate so its
+repository check inspects the exact staged content. Review `git diff --cached` before committing.
+
+Keep commits focused and use imperative subjects with a conventional prefix, such as
+`feat: add a citation check`, `fix: preserve interrupted trials` or `docs: explain task limits`.
+One logical change should include its tests and documentation. Avoid unrelated formatting
+or generated artifacts. Update [CHANGELOG.md](CHANGELOG.md) for user-visible changes.
+
+The GitHub Actions workflow runs the same gate on macOS and Linux with Python 3.12. Actions
+are pinned to immutable commits, job permissions are read-only, checkout credentials are not
+persisted and no publishing/upload step is configured. Initial dependency setup accesses public
+package sources; the verification steps run offline. Local results do not establish that a
+hosted job has run successfully.
 
 ## Where changes belong
 
@@ -48,12 +63,30 @@ legacy purchasing CLI compatibility unless a separately documented breaking chan
 
 ## Packaging and reporting issues
 
-`scripts/qualify_package.py --output <new-directory>` builds an offline wheel, inspects its
-contents, installs into a fresh venv and runs both CLIs outside the source tree. The full
+`scripts/qualify_package.py --output <new-directory>` builds a wheel and source archive,
+checks their contents against public-source boundaries, rebuilds the wheel from the source
+archive, installs into a fresh venv and runs both CLIs outside the source tree. The full
 harness includes it. `scripts/qualify_agents.py` retains passing, broken, refusal, manual
 and comparison examples. None publishes to a package index.
 
 For a bug report, include the command, runtime, smallest scrubbed task/agent, expected result,
 actual result and relevant evidence. Never include secrets or sensitive raw logs. Until a
 maintainer publishes a private security reporting channel, do not publish exploit details or
-private evidence to an unrelated account. There is no invented contact address.
+private evidence to an unrelated account.
+
+## Repository and release hygiene
+
+Keep tool code in `src/`, tests in `tests/`, examples in `examples/`, user/developer guides
+in `docs/`, and maintenance commands in `scripts/`. Do not commit research, internal planning,
+personal assistant instructions, generated run evidence, virtual environments or credentials.
+Local-only material belongs under ignored `.local/`; root `AGENTS.md` is also local-only.
+
+`scripts/check_repository.py` checks staged/tracked paths and common accidental secret patterns.
+It is a focused guard, not a comprehensive secret scanner. Review content before sharing.
+New public document names or file types require an explicit update to its allowlist. Source
+archives also use an explicit include list; `.gitignore` alone is not a release boundary.
+
+Before publishing a release: run the complete gate, inspect both archive manifests, confirm
+the version/changelog, configure a private reporting channel, and review the repository's
+branch protection and CI settings. A maintainer must separately authorize tagging or publishing;
+the local verification commands never push, create a release or upload a package.

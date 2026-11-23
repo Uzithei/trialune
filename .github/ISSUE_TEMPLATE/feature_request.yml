@@ -1,0 +1,23 @@
+name: Feature request
+description: Propose a concrete evaluation use case or improvement.
+title: "feat: "
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+      description: What task cannot currently be evaluated, and who needs it?
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Proposed behavior
+      description: Describe observable success criteria and the evidence the framework should collect.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives and trade-offs
+      description: Include existing workarounds, compatibility concerns and operational costs.

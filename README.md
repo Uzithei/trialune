@@ -123,6 +123,7 @@ The offline gate checks locked dependencies, lint/format, strict types, architec
 behavioral tests, nine deliberately broken variants, complete CLI journeys and release
 packages installed outside the source tree. Logs, coverage, packages and source fingerprints
 stay under `artifacts/verification/`. See [verification](docs/verification.md) for details.
+The included [CI workflow](.github/workflows/ci.yml) runs that gate on macOS and Linux.
 
 Run **trusted agent code**. Process separation is not a hostile-code sandbox: agents can
 access files/network under your OS user. Tools bypassing the context are unobserved.
@@ -135,6 +136,9 @@ Token usage and cost remain unknown. Read the [operational limits](docs/agent-in
 | [Verification map](docs/verification.md) | Claims tied to executable evidence |
 | [Contributing](CONTRIBUTING.md) | Add qualified tasks, checks and adapters |
 | [Legacy purchasing](docs/purchasing-guide.md) | Optional trace auditing via `eval-orchestrator` |
+| [Changelog](CHANGELOG.md) | User-visible changes and release status |
+| [Security](SECURITY.md) | Vulnerability reporting and trust model |
+| [Code of conduct](CODE_OF_CONDUCT.md) | Community expectations |
 
 Licensed under [MIT](LICENSE). Install from source using the instructions above; no package-index
 release is assumed. Hosted services, HTTP agents, browser tasks, semantic model judges and
