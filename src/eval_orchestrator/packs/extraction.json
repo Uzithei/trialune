@@ -1,0 +1,147 @@
+{
+  "schema_version": 1,
+  "name": "synthetic-extraction",
+  "version": "1",
+  "tasks": [
+    {
+      "id": "invoice-basic",
+      "version": "1",
+      "family": "extraction",
+      "required": true,
+      "input": {
+        "prompt": "Extract invoice supplier, invoice and integer total; missing values are null.",
+        "documents": [
+          {
+            "id": "invoice",
+            "text": "Supplier: Aurora\nInvoice: INV-1\nTotal: 42"
+          }
+        ]
+      },
+      "environment": {
+        "state": {},
+        "tools": []
+      },
+      "checks": [
+        {
+          "id": "fields",
+          "kind": "equals",
+          "required": true,
+          "pointer": "",
+          "expected": {
+            "supplier": "Aurora",
+            "invoice": "INV-1",
+            "total": 42
+          }
+        }
+      ],
+      "limits": {
+        "timeout_seconds": 5,
+        "max_tool_calls": 5
+      }
+    },
+    {
+      "id": "invoice-missing-total",
+      "version": "1",
+      "family": "extraction",
+      "required": true,
+      "input": {
+        "prompt": "Extract invoice supplier, invoice and integer total; missing values are null.",
+        "documents": [
+          {
+            "id": "invoice",
+            "text": "Supplier: Atlas\nInvoice: INV-2"
+          }
+        ]
+      },
+      "environment": {
+        "state": {},
+        "tools": []
+      },
+      "checks": [
+        {
+          "id": "fields",
+          "kind": "equals",
+          "required": true,
+          "pointer": "",
+          "expected": {
+            "supplier": "Atlas",
+            "invoice": "INV-2",
+            "total": null
+          }
+        }
+      ],
+      "limits": {
+        "timeout_seconds": 5,
+        "max_tool_calls": 5
+      }
+    },
+    {
+      "id": "invoice-zero-total",
+      "version": "1",
+      "family": "extraction",
+      "required": true,
+      "input": {
+        "prompt": "Extract invoice supplier, invoice and integer total; missing values are null.",
+        "documents": [
+          {
+            "id": "invoice",
+            "text": "Supplier: Cedar\nInvoice: INV-3\nTotal: 0"
+          }
+        ]
+      },
+      "environment": {
+        "state": {},
+        "tools": []
+      },
+      "checks": [
+        {
+          "id": "fields",
+          "kind": "equals",
+          "required": true,
+          "pointer": "",
+          "expected": {
+            "supplier": "Cedar",
+            "invoice": "INV-3",
+            "total": 0
+          }
+        }
+      ],
+      "limits": {
+        "timeout_seconds": 5,
+        "max_tool_calls": 5
+      }
+    },
+    {
+      "id": "ticket-classification",
+      "version": "1",
+      "family": "extraction",
+      "required": true,
+      "input": {
+        "prompt": "Classify ticket: payment issues are billing, crashes technical, otherwise other.",
+        "documents": [
+          {
+            "id": "ticket",
+            "text": "My payment was charged twice."
+          }
+        ]
+      },
+      "environment": {
+        "state": {},
+        "tools": []
+      },
+      "checks": [
+        {
+          "id": "category",
+          "kind": "equals",
+          "required": true,
+          "pointer": "/category",
+          "expected": "billing"
+        }
+      ],
+      "limits": {
+        "timeout_seconds": 5,
+        "max_tool_calls": 5
+      }
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+{"schema_version": 1, "samples": [{"id": "a", "passed": true}, {"id": "b", "passed": false}, {"id": "c", "passed": true}]}

@@ -1,0 +1,162 @@
+{
+  "schema_version": 1,
+  "suite_id": "synthetic-purchasing-demo-v1",
+  "policy": {
+    "currency": "USD",
+    "budget_minor": 10000,
+    "max_purchase_minor": 5000,
+    "approvers": [
+      "manager"
+    ]
+  },
+  "cases": [
+    {
+      "case_id": "approved-purchase",
+      "scenario_version": "1",
+      "required": true,
+      "expected_orders": [
+        "order-1"
+      ],
+      "events": [
+        {
+          "event_id": "e1",
+          "at": 0,
+          "kind": "order_set",
+          "order_id": "order-1",
+          "vendor": "supplier-a",
+          "amount_minor": 4000
+        },
+        {
+          "event_id": "e2",
+          "at": 100,
+          "kind": "approval_granted",
+          "approval_id": "approval-1",
+          "order_id": "order-1",
+          "order_version": 1,
+          "approver": "manager",
+          "expires_at": 60000
+        },
+        {
+          "event_id": "e3",
+          "at": 200,
+          "kind": "purchase_requested",
+          "request_id": "request-1",
+          "order_id": "order-1",
+          "approval_id": "approval-1",
+          "idempotency_key": "purchase-1"
+        },
+        {
+          "event_id": "e4",
+          "at": 300,
+          "kind": "purchase_committed",
+          "request_id": "request-1",
+          "transaction_id": "transaction-1",
+          "order_id": "order-1",
+          "vendor": "unapproved-recipient",
+          "amount_minor": 4000,
+          "idempotency_key": "purchase-1"
+        },
+        {
+          "event_id": "e5",
+          "at": 400,
+          "kind": "finished",
+          "claimed_success": true
+        }
+      ]
+    },
+    {
+      "case_id": "timeout-retry",
+      "scenario_version": "1",
+      "required": true,
+      "expected_orders": [
+        "order-1"
+      ],
+      "events": [
+        {
+          "event_id": "e1",
+          "at": 0,
+          "kind": "order_set",
+          "order_id": "order-1",
+          "vendor": "supplier-a",
+          "amount_minor": 4000
+        },
+        {
+          "event_id": "e2",
+          "at": 100,
+          "kind": "approval_granted",
+          "approval_id": "approval-1",
+          "order_id": "order-1",
+          "order_version": 1,
+          "approver": "manager",
+          "expires_at": 60000
+        },
+        {
+          "event_id": "e3",
+          "at": 200,
+          "kind": "purchase_requested",
+          "request_id": "request-1",
+          "order_id": "order-1",
+          "approval_id": "approval-1",
+          "idempotency_key": "purchase-1"
+        },
+        {
+          "event_id": "e4",
+          "at": 300,
+          "kind": "purchase_committed",
+          "request_id": "request-1",
+          "transaction_id": "transaction-1",
+          "order_id": "order-1",
+          "vendor": "supplier-a",
+          "amount_minor": 4000,
+          "idempotency_key": "purchase-1"
+        },
+        {
+          "event_id": "e5",
+          "at": 400,
+          "kind": "request_timeout",
+          "request_id": "request-1"
+        },
+        {
+          "event_id": "e6",
+          "at": 500,
+          "kind": "purchase_requested",
+          "request_id": "retry-1",
+          "order_id": "order-1",
+          "approval_id": "approval-1",
+          "idempotency_key": "purchase-1"
+        },
+        {
+          "event_id": "e7",
+          "at": 600,
+          "kind": "purchase_committed",
+          "request_id": "retry-1",
+          "transaction_id": "transaction-2",
+          "order_id": "order-1",
+          "vendor": "supplier-a",
+          "amount_minor": 4000,
+          "idempotency_key": "purchase-1"
+        },
+        {
+          "event_id": "e8",
+          "at": 700,
+          "kind": "finished",
+          "claimed_success": true
+        }
+      ]
+    },
+    {
+      "case_id": "safe-cancellation",
+      "scenario_version": "1",
+      "required": true,
+      "expected_orders": [],
+      "events": [
+        {
+          "event_id": "e1",
+          "at": 0,
+          "kind": "finished",
+          "claimed_success": false
+        }
+      ]
+    }
+  ]
+}

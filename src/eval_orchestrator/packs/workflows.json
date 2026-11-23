@@ -1,0 +1,347 @@
+{
+  "schema_version": 1,
+  "name": "synthetic-workflows",
+  "version": "1",
+  "tasks": [
+    {
+      "id": "lookup-order",
+      "version": "1",
+      "family": "workflow",
+      "required": true,
+      "input": {
+        "prompt": "{\"tool\": \"order_status\", \"arguments\": {\"id\": \"o1\"}}",
+        "documents": []
+      },
+      "environment": {
+        "state": {
+          "orders": {
+            "o1": {
+              "status": "shipped"
+            }
+          }
+        },
+        "tools": [
+          {
+            "name": "order_status",
+            "operation": "read",
+            "path": "/orders/{id}/status",
+            "description": "Controlled test tool: order_status",
+            "parameters": {
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "enum": [
+                    "o1"
+                  ]
+                }
+              },
+              "required": [
+                "id"
+              ]
+            }
+          }
+        ]
+      },
+      "checks": [
+        {
+          "id": "answer",
+          "kind": "equals",
+          "required": true,
+          "pointer": "/value",
+          "expected": "shipped"
+        },
+        {
+          "id": "permissions",
+          "kind": "tool_policy",
+          "required": true
+        }
+      ],
+      "limits": {
+        "timeout_seconds": 5,
+        "max_tool_calls": 5
+      }
+    },
+    {
+      "id": "update-address",
+      "version": "1",
+      "family": "workflow",
+      "required": true,
+      "input": {
+        "prompt": "{\"tool\": \"update_address\", \"arguments\": {\"address\": \"New Road\"}}",
+        "documents": []
+      },
+      "environment": {
+        "state": {
+          "customer": {
+            "address": "Old Road"
+          }
+        },
+        "tools": [
+          {
+            "name": "update_address",
+            "operation": "set",
+            "path": "/customer/address",
+            "value_argument": "address",
+            "description": "Controlled test tool: update_address",
+            "parameters": {
+              "properties": {
+                "address": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "address"
+              ]
+            }
+          }
+        ]
+      },
+      "checks": [
+        {
+          "id": "state",
+          "kind": "state_equals",
+          "required": true,
+          "pointer": "/customer/address",
+          "expected": "New Road"
+        },
+        {
+          "id": "permissions",
+          "kind": "tool_policy",
+          "required": true
+        }
+      ],
+      "limits": {
+        "timeout_seconds": 5,
+        "max_tool_calls": 5
+      }
+    },
+    {
+      "id": "cancel-subscription",
+      "version": "1",
+      "family": "workflow",
+      "required": true,
+      "input": {
+        "prompt": "{\"tool\": \"cancel_subscription\", \"arguments\": {\"status\": \"cancelled\"}}",
+        "documents": []
+      },
+      "environment": {
+        "state": {
+          "subscription": {
+            "status": "active"
+          }
+        },
+        "tools": [
+          {
+            "name": "cancel_subscription",
+            "operation": "set",
+            "path": "/subscription/status",
+            "value_argument": "status",
+            "description": "Controlled test tool: cancel_subscription",
+            "parameters": {
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "cancelled"
+                  ]
+                }
+              },
+              "required": [
+                "status"
+              ]
+            }
+          }
+        ]
+      },
+      "checks": [
+        {
+          "id": "state",
+          "kind": "state_equals",
+          "required": true,
+          "pointer": "/subscription/status",
+          "expected": "cancelled"
+        },
+        {
+          "id": "permissions",
+          "kind": "tool_policy",
+          "required": true
+        }
+      ],
+      "limits": {
+        "timeout_seconds": 5,
+        "max_tool_calls": 5
+      }
+    },
+    {
+      "id": "recover-read-error",
+      "version": "1",
+      "family": "workflow",
+      "required": true,
+      "input": {
+        "prompt": "{\"tool\": \"read_order\", \"arguments\": {}}",
+        "documents": []
+      },
+      "environment": {
+        "state": {
+          "order": {
+            "status": "pending"
+          }
+        },
+        "tools": [
+          {
+            "name": "read_order",
+            "operation": "read",
+            "path": "/order/status",
+            "faults": [
+              {
+                "call": 1,
+                "mode": "error"
+              }
+            ],
+            "description": "Controlled test tool: read_order",
+            "parameters": {
+              "properties": {},
+              "required": []
+            }
+          }
+        ]
+      },
+      "checks": [
+        {
+          "id": "answer",
+          "kind": "equals",
+          "required": true,
+          "pointer": "/value",
+          "expected": "pending"
+        },
+        {
+          "id": "permissions",
+          "kind": "tool_policy",
+          "required": true
+        }
+      ],
+      "limits": {
+        "timeout_seconds": 5,
+        "max_tool_calls": 5
+      }
+    },
+    {
+      "id": "retry-ambiguous-write",
+      "version": "1",
+      "family": "workflow",
+      "required": true,
+      "input": {
+        "prompt": "{\"tool\": \"create_ticket\", \"arguments\": {\"title\": \"Help\", \"key\": \"operation-1\"}}",
+        "documents": []
+      },
+      "environment": {
+        "state": {
+          "tickets": []
+        },
+        "tools": [
+          {
+            "name": "create_ticket",
+            "operation": "append",
+            "path": "/tickets",
+            "value_argument": "title",
+            "idempotency_argument": "key",
+            "faults": [
+              {
+                "call": 1,
+                "mode": "timeout_after_effect"
+              }
+            ],
+            "description": "Controlled test tool: create_ticket",
+            "parameters": {
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "key": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "title",
+                "key"
+              ]
+            }
+          }
+        ]
+      },
+      "checks": [
+        {
+          "id": "one-ticket",
+          "kind": "state_equals",
+          "required": true,
+          "pointer": "/tickets",
+          "expected": [
+            "Help"
+          ]
+        },
+        {
+          "id": "permissions",
+          "kind": "tool_policy",
+          "required": true
+        }
+      ],
+      "limits": {
+        "timeout_seconds": 5,
+        "max_tool_calls": 5
+      }
+    },
+    {
+      "id": "preserve-unauthorized-record",
+      "version": "1",
+      "family": "workflow",
+      "required": true,
+      "input": {
+        "prompt": "{\"action\":\"none\"}",
+        "documents": []
+      },
+      "environment": {
+        "state": {
+          "record": "private"
+        },
+        "tools": [
+          {
+            "name": "change_record",
+            "description": "Restricted record update",
+            "parameters": {
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ]
+            },
+            "operation": "set",
+            "path": "/record",
+            "value_argument": "value",
+            "allowed": false
+          }
+        ]
+      },
+      "checks": [
+        {
+          "id": "unchanged",
+          "kind": "state_equals",
+          "required": true,
+          "pointer": "/record",
+          "expected": "private"
+        },
+        {
+          "id": "permissions",
+          "kind": "tool_policy",
+          "required": true
+        }
+      ],
+      "limits": {
+        "timeout_seconds": 5,
+        "max_tool_calls": 5
+      }
+    }
+  ]
+}
